@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Article - NewsHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="add-news.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="theme-enhanced.css">
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo"><a href="index.html">📰 NewsHub</a></div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">News</a></li>
+                    <li><a href="add-news.html" class="nav-active">Submit Article</a></li>
+                    <li class="theme-toggle">
+                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                    <li>
+                        <div class="user-menu">
+                            <span id="userDisplay">User</span>
+                            <button id="logoutBtn" class="btn-logout" title="Logout">🚪 Logout</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content submit-page">
+        <div class="container">
+            <!-- Not Logged In State -->
+            <section id="notLoggedIn" class="login-prompt">
+                <div class="prompt-box">
+                    <h2>📝 Please Login First</h2>
+                    <p>You need to be logged in to submit articles to NewsHub</p>
+                    <div class="prompt-buttons">
+                        <a href="user-login.html" class="btn-primary">Login / Sign Up</a>
+                        <a href="index.html" class="btn-secondary">Back to News</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logged In State -->
+            <section id="submitSection" class="submit-section hidden">
+                <div class="submit-header">
+                    <h1>📤 Submit Your Article</h1>
+                    <p>Share your story with NewsHub readers</p>
+                </div>
+
+                <div class="submit-container">
+                    <form id="submitArticleForm" class="submit-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="articleTitle">Article Title *</label>
+                                <input 
+                                    type="text" 
+                                    id="articleTitle" 
+                                    required 
+                                    placeholder="Enter article title"
+                                    maxlength="200"
+                                >
+                                <small><span id="titleCount">0</span>/200</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="articleAuthor">Author Name (Your Name) *</label>
+                                <input 
+                                    type="text" 
+                                    id="articleAuthor" 
+                                    required 
+                                    placeholder="Your name"
+                                    readonly
+                                    id="authorDisplay"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="articleCategory">Category *</label>
+                                <select id="articleCategory" required>
+                                    <option value="">Select a category</option>
+                                    <option value="tech">🔬 Technology</option>
+                                    <option value="business">💼 Business</option>
+                                    <option value="sports">⚽ Sports</option>
+                                    <option value="health">🏥 Health</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="articleDescription">Article Description *</label>
+                                <textarea 
+                                    id="articleDescription" 
+                                    required 
+                                    placeholder="Write your article description (minimum 50 characters)"
+                                    rows="8"
+                                    maxlength="3000"
+                                ></textarea>
+                                <small><span id="descCount">0</span>/3000</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="articleImage">Article Image</label>
+                                <div class="image-upload">
+                                    <input 
+                                        type="file" 
+                                        id="articleImage" 
+                                        accept="image/*"
+                                        class="image-input"
+                                    >
+                                    <div class="upload-area">
+                                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <p>Drag and drop your image here or click to browse</p>
+                                        <small>Max 5MB - JPEG, PNG, WebP</small>
+                                    </div>
+                                    <div id="imagePreview" class="image-preview hidden">
+                                        <img id="previewImage" src="" alt="Preview">
+                                        <button type="button" class="btn-remove-image" onclick="removeImage()">✕ Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">✨ Publish Article</button>
+                            <a href="index.html" class="btn-cancel">Cancel</a>
+                        </div>
+                    </form>
+
+                    <div id="submitMessage" class="submit-message"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NewsHub. All rights reserved. | User Article Submission</p>
+        </div>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="add-news-user.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add News - NewsHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="add-news.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="theme-enhanced.css">
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">📰 NewsHub</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="add-news.html" class="active">Add News</a></li>
+                    <li><a href="#" onclick="filterNews('all')">All News</a></li>
+                    <li class="theme-toggle">
+                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content add-news-page">
+        <div class="container">
+            <section class="add-news-container">
+                <div class="add-news-header">
+                    <h1>Share Your News Story</h1>
+                    <p>Help us keep the community informed by sharing the latest news and updates</p>
+                </div>
+
+                <form id="addNewsForm" class="add-news-form">
+                    <div class="form-section">
+                        <h3>Article Details</h3>
+                        
+                        <div class="form-group">
+                            <label for="title">Article Title *</label>
+                            <input 
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                required 
+                                placeholder="Enter an engaging headline"
+                                maxlength="200"
+                            >
+                            <small class="char-count"><span id="titleCount">0</span>/200</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="author">Author Name *</label>
+                                <input 
+                                    type="text" 
+                                    id="author" 
+                                    name="author" 
+                                    required 
+                                    placeholder="Your full name"
+                                    maxlength="100"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category *</label>
+                                <select id="category" name="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="tech">🔬 Technology</option>
+                                    <option value="business">💼 Business</option>
+                                    <option value="sports">⚽ Sports</option>
+                                    <option value="health">🏥 Health</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Article Description *</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                required 
+                                placeholder="Write your news article here... (minimum 50 characters)"
+                                rows="8"
+                                maxlength="2000"
+                            ></textarea>
+                            <small class="char-count"><span id="descCount">0</span>/2000</small>
+                            <small class="hint">Minimum 50 characters required</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Media & Additional Info</h3>
+
+                        <div class="image-input-container">
+                            <div class="form-group">
+                                <label>Image Source</label>
+                                <div class="image-source-tabs">
+                                    <button type="button" class="tab-btn active" data-tab="upload">📤 Upload from Device</button>
+                                    <button type="button" class="tab-btn" data-tab="url">🔗 Image URL</button>
+                                </div>
+                            </div>
+
+                            <!-- Upload from Device Tab -->
+                            <div id="uploadTab" class="image-tab active">
+                                <div class="form-group">
+                                    <label for="imageFile">Select Image File</label>
+                                    <div class="file-upload-area" id="dropZone">
+                                        <input 
+                                            type="file" 
+                                            id="imageFile" 
+                                            name="imageFile" 
+                                            accept="image/*"
+                                            class="file-input"
+                                        >
+                                        <div class="upload-prompt">
+                                            <span class="upload-icon">📁</span>
+                                            <p>Drag and drop your image here</p>
+                                            <p class="or-text">or click to browse</p>
+                                            <small>Supported: JPG, PNG, GIF, WebP (Max 5MB)</small>
+                                        </div>
+                                    </div>
+                                    <div id="fileInfo" class="file-info hidden"></div>
+                                </div>
+                            </div>
+
+                            <!-- Image URL Tab -->
+                            <div id="urlTab" class="image-tab hidden">
+                                <div class="form-group">
+                                    <label for="image">Image URL (Optional)</label>
+                                    <input 
+                                        type="url" 
+                                        id="image" 
+                                        name="image" 
+                                        placeholder="https://example.com/image.jpg"
+                                    >
+                                    <small class="hint">Provide a URL to an image related to your news article</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="imagePreview" class="image-preview hidden">
+                            <p>Preview:</p>
+                            <img id="previewImg" src="" alt="Preview">
+                            <button type="button" class="btn-remove-image" onclick="removeImage()">Remove Image</button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">📤 Publish News</button>
+                        <a href="index.html" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
+
+                <div id="formMessage" class="form-message"></div>
+
+                <div class="success-message hidden" id="successMessage">
+                    <div class="success-content">
+                        <h2>✓ Success!</h2>
+                        <p>Your news article has been published successfully.</p>
+                        <a href="index.html" class="btn-back">Back to Home</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Guidelines Section -->
+            <section class="guidelines-section">
+                <h2>Publishing Guidelines</h2>
+                <div class="guidelines-grid">
+                    <div class="guideline-card">
+                        <h3>✓ Be Truthful</h3>
+                        <p>Share accurate and verified information only. Double-check facts before publishing.</p>
+                    </div>
+                    <div class="guideline-card">
+                        <h3>✓ Be Respectful</h3>
+                        <p>Maintain a professional tone and respect differing viewpoints and opinions.</p>
+                    </div>
+                    <div class="guideline-card">
+                        <h3>✓ Be Clear</h3>
+                        <p>Write clearly and concisely. Use proper grammar and punctuation for better readability.</p>
+                    </div>
+                    <div class="guideline-card">
+                        <h3>✓ Be Original</h3>
+                        <p>Share original content or properly attribute sources. Respect copyright and intellectual property.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NewsHub. All rights reserved. | Help keep the world informed.</p>
+        </div>
+    </footer>
+
+    <script src="add-news.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

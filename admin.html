@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - NewsHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="theme-enhanced.css">
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">📰 NewsHub Admin</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">View Public Site</a></li>
+                    <li class="theme-toggle">
+                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content admin-page">
+        <div class="container">
+            <!-- Login Section -->
+            <section id="loginSection" class="admin-login">
+                <div class="login-container">
+                    <h1>Admin Login</h1>
+                    <p>Enter the admin password to access the control panel</p>
+                    <form id="loginForm" class="login-form">
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password</label>
+                            <input 
+                                type="password" 
+                                id="adminPassword" 
+                                name="password" 
+                                required 
+                                placeholder="Enter admin password"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <button type="submit" class="btn-login">Login</button>
+                    </form>
+                    <div id="loginMessage" class="login-message"></div>
+                </div>
+            </section>
+
+            <!-- Admin Dashboard (Hidden until logged in) -->
+            <section id="adminDashboard" class="admin-dashboard hidden">
+                <!-- Sidebar -->
+                <aside class="admin-sidebar">
+                    <div class="admin-user-info">
+                        <h3>👤 Admin Panel</h3>
+                        <p id="userDisplay">Welcome, Owner</p>
+                    </div>
+                    <nav class="admin-nav">
+                        <button class="admin-nav-item active" data-section="articles">
+                            📰 Manage Articles
+                        </button>
+                        <button class="admin-nav-item" data-section="add-article">
+                            ➕ Add New Article
+                        </button>
+                        <button class="admin-nav-item" data-section="settings">
+                            ⚙️ Settings
+                        </button>
+                        <button class="admin-nav-item logout-btn" onclick="logout()">
+                            🚪 Logout
+                        </button>
+                    </nav>
+                </aside>
+
+                <!-- Main Admin Content -->
+                <div class="admin-content">
+                    <!-- Manage Articles Section -->
+                    <section id="articlesSection" class="admin-section active">
+                        <h2>Manage Articles</h2>
+                        <div class="articles-stats">
+                            <div class="stat-card">
+                                <span class="stat-number" id="totalArticles">0</span>
+                                <span class="stat-label">Total Articles</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" id="techCount">0</span>
+                                <span class="stat-label">Technology</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" id="businessCount">0</span>
+                                <span class="stat-label">Business</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" id="sportsCount">0</span>
+                                <span class="stat-label">Sports</span>
+                            </div>
+                        </div>
+
+                        <div class="articles-filter">
+                            <input 
+                                type="text" 
+                                id="searchArticles" 
+                                class="search-input"
+                                placeholder="Search articles..."
+                            >
+                            <select id="filterCategory" class="filter-select">
+                                <option value="">All Categories</option>
+                                <option value="tech">Technology</option>
+                                <option value="business">Business</option>
+                                <option value="sports">Sports</option>
+                                <option value="health">Health</option>
+                            </select>
+                        </div>
+
+                        <div class="articles-list" id="adminArticlesList">
+                            <!-- Articles will be loaded here -->
+                        </div>
+                    </section>
+
+                    <!-- Add Article Section -->
+                    <section id="addArticleSection" class="admin-section">
+                        <h2>Add New Article</h2>
+                        <form id="adminAddForm" class="admin-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="adminTitle">Title *</label>
+                                    <input 
+                                        type="text" 
+                                        id="adminTitle" 
+                                        required 
+                                        placeholder="Article title"
+                                        maxlength="200"
+                                    >
+                                    <small><span id="adminTitleCount">0</span>/200</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="adminAuthor">Author *</label>
+                                    <input 
+                                        type="text" 
+                                        id="adminAuthor" 
+                                        required 
+                                        placeholder="Author name"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="adminCategory">Category *</label>
+                                    <select id="adminCategory" required>
+                                        <option value="">Select category</option>
+                                        <option value="tech">🔬 Technology</option>
+                                        <option value="business">💼 Business</option>
+                                        <option value="sports">⚽ Sports</option>
+                                        <option value="health">🏥 Health</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="adminImage">Image URL (Optional)</label>
+                                    <input 
+                                        type="url" 
+                                        id="adminImage" 
+                                        placeholder="https://example.com/image.jpg"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="adminDescription">Description *</label>
+                                <textarea 
+                                    id="adminDescription" 
+                                    required 
+                                    placeholder="Article description"
+                                    rows="6"
+                                    maxlength="2000"
+                                ></textarea>
+                                <small><span id="adminDescCount">0</span>/2000</small>
+                            </div>
+
+                            <button type="submit" class="btn-submit">📤 Publish Article</button>
+                        </form>
+                        <div id="adminFormMessage" class="form-message"></div>
+                    </section>
+
+                    <!-- Settings Section -->
+                    <section id="settingsSection" class="admin-section">
+                        <h2>Settings</h2>
+                        <div class="settings-container">
+                            <div class="setting-card">
+                                <h3>Change Admin Password</h3>
+                                <form id="changePasswordForm" class="settings-form">
+                                    <div class="form-group">
+                                        <label for="currentPassword">Current Password</label>
+                                        <input 
+                                            type="password" 
+                                            id="currentPassword" 
+                                            required 
+                                            placeholder="Enter current password"
+                                        >
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword">New Password</label>
+                                        <input 
+                                            type="password" 
+                                            id="newPassword" 
+                                            required 
+                                            placeholder="Enter new password"
+                                        >
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirmPassword">Confirm Password</label>
+                                        <input 
+                                            type="password" 
+                                            id="confirmPassword" 
+                                            required 
+                                            placeholder="Confirm new password"
+                                        >
+                                    </div>
+                                    <button type="submit" class="btn-submit">Update Password</button>
+                                </form>
+                                <div id="passwordMessage" class="form-message"></div>
+                            </div>
+
+                            <div class="setting-card">
+                                <h3>Database Information</h3>
+                                <div class="info-display">
+                                    <p><strong>Data Storage:</strong> Local JSON file (news_data.json)</p>
+                                    <p><strong>Last Updated:</strong> <span id="lastUpdated">Loading...</span></p>
+                                    <p><strong>Total Articles:</strong> <span id="dbTotalArticles">0</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NewsHub Admin. All rights reserved. | Secure Admin Panel</p>
+        </div>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

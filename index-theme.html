@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsHub - Latest News</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="theme.css">
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">📰 NewsHub</div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#" onclick="filterNews('all')">All</a></li>
+                    <li><a href="#" onclick="filterNews('tech')">Technology</a></li>
+                    <li><a href="#" onclick="filterNews('business')">Business</a></li>
+                    <li><a href="#" onclick="filterNews('sports')">Sports</a></li>
+                    <li><a href="#" onclick="filterNews('health')">Health</a></li>
+                    <li><a href="add-news.html" class="nav-add">+ Add News</a></li>
+                    <li class="theme-toggle">
+                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Featured News -->
+            <section class="featured">
+                <h2>Featured Story</h2>
+                <article class="featured-article" id="featuredArticle">
+                    <img src="https://via.placeholder.com/1200x400?text=Featured+News" alt="Featured news">
+                    <div class="featured-content">
+                        <span class="category">Technology</span>
+                        <h3>Breaking: New AI Technology Transforms Industry</h3>
+                        <p>Revolutionary advancements in artificial intelligence are changing the landscape of modern technology and business operations worldwide.</p>
+                        <a href="#" class="read-more">Read Full Story →</a>
+                    </div>
+                </article>
+            </section>
+
+            <!-- News Grid -->
+            <section class="news-section">
+                <h2>Latest News</h2>
+                <div class="news-grid" id="newsGrid">
+                    <!-- News articles will be loaded here by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NewsHub. All rights reserved. | Stay informed, stay updated.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

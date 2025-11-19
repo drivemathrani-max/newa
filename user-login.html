@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login - NewsHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="user-login.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="theme-enhanced.css">
+    <!-- Google OAuth -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo"><a href="index.html">📰 NewsHub</a></div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">News</a></li>
+                    <li class="theme-toggle">
+                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content login-page">
+        <div class="container">
+            <div class="login-wrapper">
+                <!-- Login Form -->
+                <div class="auth-container" id="loginContainer">
+                    <h1>Welcome Back</h1>
+                    <p>Login to your NewsHub account</p>
+                    
+                    <form id="userLoginForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="loginUsername">Username or Email</label>
+                            <input 
+                                type="text" 
+                                id="loginUsername" 
+                                required 
+                                placeholder="Enter username or email"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input 
+                                type="password" 
+                                id="loginPassword" 
+                                required 
+                                placeholder="Enter your password"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <button type="submit" class="btn-auth">Login</button>
+                    </form>
+                    <div id="loginMessage" class="auth-message"></div>
+
+                    <!-- Google OAuth Button -->
+                    <div class="oauth-divider">
+                        <span>or</span>
+                    </div>
+                    <div id="googleLoginButton" class="google-signin-button"></div>
+
+                    <!-- Switch to Signup -->
+                    <p class="auth-switch">
+                        Don't have an account? <a href="#" onclick="toggleAuthMode(event)">Sign up</a>
+                    </p>
+                </div>
+
+                <!-- Signup Form -->
+                <div class="auth-container hidden" id="signupContainer">
+                    <h1>Create Account</h1>
+                    <p>Join NewsHub to share your stories</p>
+                    
+                    <form id="userSignupForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="signupUsername">Username</label>
+                            <input 
+                                type="text" 
+                                id="signupUsername" 
+                                required 
+                                placeholder="Choose a username"
+                                minlength="3"
+                                maxlength="20"
+                                autocomplete="off"
+                            >
+                            <small id="usernameHint"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupEmail">Email</label>
+                            <input 
+                                type="email" 
+                                id="signupEmail" 
+                                required 
+                                placeholder="Enter your email"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <input 
+                                type="password" 
+                                id="signupPassword" 
+                                required 
+                                placeholder="Create a password (min 6 characters)"
+                                minlength="6"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="signupConfirm">Confirm Password</label>
+                            <input 
+                                type="password" 
+                                id="signupConfirm" 
+                                required 
+                                placeholder="Confirm your password"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <button type="submit" class="btn-auth">Create Account</button>
+                    </form>
+                    <div id="signupMessage" class="auth-message"></div>
+
+                    <!-- Google OAuth Button for Signup -->
+                    <div class="oauth-divider">
+                        <span>or</span>
+                    </div>
+                    <div id="googleSignupButton" class="google-signin-button"></div>
+
+                    <!-- Switch to Login -->
+                    <p class="auth-switch">
+                        Already have an account? <a href="#" onclick="toggleAuthMode(event)">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NewsHub. All rights reserved. | Secure User Portal</p>
+        </div>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="user-login.js"></script>
+</body>
+</html>
