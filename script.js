@@ -6,9 +6,77 @@ let currentFilter = 'all';
 
 // Initialize page on load
 document.addEventListener('DOMContentLoaded', () => {
+    checkUserSession();
     loadNews();
     setupFormHandler();
+    loadFeaturedArticle(); 
 });
+
+// Check user session and manage navbar
+function checkUserSession() {
+    const userSession = sessionStorage.getItem('userSession');
+    const userMenuContainer = document.getElementById('userMenuContainer');
+    
+    if (userMenuContainer) {
+        if (userSession) {
+            // User is logged in - show menu
+            const user = JSON.parse(userSession);
+            const userDisplay = userMenuContainer.querySelector('#userDisplay');
+            if (userDisplay) {
+                userDisplay.textContent = user.username;
+            }
+            userMenuContainer.classList.remove('hidden');
+            
+            // Setup logout button
+            const logoutBtn = userMenuContainer.querySelector('#logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Load and show articles badge
+            loadUserArticlesCount(user);
+        } else {
+            // User is not logged in - hide menu
+            userMenuContainer.classList.add('hidden');
+        }
+    }
+}
+
+// Load user articles count for badge
+function loadUserArticlesCount(user) {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(articles => {
+            const userArticles = articles.filter(a => 
+                a.userId === user.userId || 
+                (a.author && a.author.toLowerCase() === user.username.toLowerCase())
+            );
+            updateArticlesBadge(userArticles.length);
+        })
+        .catch(error => console.error('Error loading articles count:', error));
+}
+
+// Update articles badge in navigation
+function updateArticlesBadge(count) {
+    const myArticlesLink = document.querySelector('nav a[href="user-articles.html"]');
+    if (myArticlesLink && count > 0) {
+        let badge = myArticlesLink.querySelector('.article-count-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'article-count-badge';
+            myArticlesLink.appendChild(badge);
+        }
+        badge.textContent = count;
+    }
+}
+
+// Handle logout
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.removeItem('userSession');
+        window.location.href = 'index.html';
+    }
+}
 
 // Setup form submission handler
 function setupFormHandler() {
@@ -35,6 +103,102 @@ function loadNews() {
             console.error('Error loading news:', error);
             showFormMessage('Error loading news. Please refresh the page.', 'error');
         });
+}
+
+// Featured carousel state
+let featuredArticles = [];
+let currentFeaturedIndex = 0;
+let carouselAutoPlayInterval;
+
+// Load and display featured articles carousel
+function loadFeaturedArticle() {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(articles => {
+            featuredArticles = articles.filter(a => a.featured === true);
+            if (featuredArticles.length > 0) {
+                displayFeaturedArticle(0);
+                setupCarousel();
+                if (featuredArticles.length > 1) {
+                    startCarouselAutoPlay();
+                }
+            } else {
+                // Hide carousel if no featured articles
+                const featuredSection = document.querySelector('.featured');
+                if (featuredSection) {
+                    featuredSection.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('Error loading featured article:', error));
+}
+
+// Display a featured article by index
+function displayFeaturedArticle(index) {
+    if (featuredArticles.length === 0) return;
+    
+    const article = featuredArticles[index];
+    const container = document.getElementById('featuredCarouselContainer');
+    
+    if (container) {
+        container.innerHTML = `
+            <article class="featured-article">
+                <img src="${article.image || 'https://via.placeholder.com/1200x400?text=Featured+News'}" alt="${article.title}">
+                <div class="featured-content">
+                    <span class="category">${article.category || ''}</span>
+                    <h3>${article.title}</h3>
+                    <p>${article.description}</p>
+                    <span class="author">By ${article.author}</span>
+                </div>
+            </article>
+        `;
+    }
+    
+    // Update indicators
+    updateCarouselIndicators(index);
+}
+
+// Setup carousel controls
+function setupCarousel() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            clearInterval(carouselAutoPlayInterval);
+            currentFeaturedIndex = (currentFeaturedIndex - 1 + featuredArticles.length) % featuredArticles.length;
+            displayFeaturedArticle(currentFeaturedIndex);
+            startCarouselAutoPlay();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            clearInterval(carouselAutoPlayInterval);
+            currentFeaturedIndex = (currentFeaturedIndex + 1) % featuredArticles.length;
+            displayFeaturedArticle(currentFeaturedIndex);
+            startCarouselAutoPlay();
+        });
+    }
+    
+    // Create indicators (removed - badges removed to toggle between articles)
+    const indicatorsContainer = document.getElementById('carouselIndicators');
+    if (indicatorsContainer) {
+        indicatorsContainer.innerHTML = '';
+    }
+}
+
+// Auto-play carousel every 5 seconds
+function startCarouselAutoPlay() {
+    carouselAutoPlayInterval = setInterval(() => {
+        currentFeaturedIndex = (currentFeaturedIndex + 1) % featuredArticles.length;
+        displayFeaturedArticle(currentFeaturedIndex);
+    }, 5000);
+}
+
+// Update carousel indicators (removed)
+function updateCarouselIndicators(index) {
+    // Indicators removed - no badges to toggle between articles
 }
 
 // Display news based on current filter
@@ -161,7 +325,7 @@ function getCategoryColor(category) {
     return colors[category] || '#e94560';
 }
 
-// Capitalize first letter
+
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }

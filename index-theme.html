@@ -9,24 +9,21 @@
 </head>
 <body class="theme-light">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">📰 NewsHub</div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="#" onclick="filterNews('all')">All</a></li>
-                    <li><a href="#" onclick="filterNews('tech')">Technology</a></li>
-                    <li><a href="#" onclick="filterNews('business')">Business</a></li>
-                    <li><a href="#" onclick="filterNews('sports')">Sports</a></li>
-                    <li><a href="#" onclick="filterNews('health')">Health</a></li>
-                    <li><a href="add-news.html" class="nav-add">+ Add News</a></li>
-                    <li class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
-                            <span class="theme-icon">🌙</span>
-                        </button>
-                    </li>
-                </ul>
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo">📰 NewsHub</a>
+            <nav>
+                <a href="index-theme.html" class="active">News</a>
+                <a href="user-articles.html">My Articles</a>
+                <a href="add-news-user.html">Submit Article</a>
             </nav>
+        </div>
+        <div class="header-right">
+            <button id="themeToggle" title="Toggle theme">🌙</button>
+            <div class="user-menu hidden" id="userMenuContainer">
+                <span class="user-display" id="userDisplay">User</span>
+                <button id="logoutBtn" class="btn-logout" title="Logout">Logout</button>
+            </div>
         </div>
     </header>
 

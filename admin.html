@@ -8,50 +8,61 @@
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="theme-enhanced.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6176180565195499"
+     crossorigin="anonymous"></script>
 </head>
 <body class="theme-light">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">📰 NewsHub Admin</div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="index.html">View Public Site</a></li>
-                    <li class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
-                            <span class="theme-icon">🌙</span>
-                        </button>
-                    </li>
-                </ul>
+    <header>
+        <div class="header-left">
+            <a href="admin.html" class="logo">📰 NewsHub Admin</a>
+            <nav>
+                <a href="index.html">View Public Site</a>
+                <a href="admin.html" class="active">Admin Panel</a>
+                <a href="user-articles.html">My Articles</a>
+                <a href="add-news-user.html">Submit Article</a>
+                <a href="user-login.html">Login</a>
             </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-menu hidden" id="userMenuContainer">
+                <span class="user-display" id="userDisplay">Admin</span>
+                <button id="logoutBtn" class="btn-logout" title="Logout">Logout</button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content admin-page">
-        <div class="container">
+        <div class="container responsive-container">
             <!-- Login Section -->
             <section id="loginSection" class="admin-login">
-                <div class="login-container">
-                    <h1>Admin Login</h1>
-                    <p>Enter the admin password to access the control panel</p>
-                    <form id="loginForm" class="login-form">
+                <div class="login-container" style="backdrop-filter: blur(16px); background: rgba(255,255,255,0.85); box-shadow: 0 8px 32px rgba(37,99,235,0.12); border-radius: 18px; border: 1.5px solid #e0e7ef;">
+                    <h1 style="font-size:2rem; font-weight:700; color:#2563eb; margin-bottom:8px;">Admin Login</h1>
+                    <p style="color:#64748b; font-size:1rem; margin-bottom:24px;">Enter the admin password to access the control panel</p>
+                    <form id="loginForm" class="login-form" style="gap:24px;">
                         <div class="form-group">
-                            <label for="adminPassword">Admin Password</label>
-                            <input 
-                                type="password" 
-                                id="adminPassword" 
-                                name="password" 
-                                required 
-                                placeholder="Enter admin password"
-                                autocomplete="off"
-                            >
+                            <label for="adminPassword" style="font-weight:600; color:#2563eb;">Admin Password</label>
+                            <input type="password" id="adminPassword" name="password" required placeholder="Enter admin password" autocomplete="off" style="padding:14px; border-radius:10px; border:2px solid #e0e7ef; font-size:1rem;">
                         </div>
-                        <button type="submit" class="btn-login">Login</button>
+                        <button type="submit" class="btn-login" style="background:linear-gradient(90deg,#2563eb 0%,#f43f5e 100%); color:#fff; border-radius:10px; font-size:1.1rem; font-weight:600; padding:14px; box-shadow:0 2px 8px rgba(37,99,235,0.08);">Login</button>
                     </form>
                     <div id="loginMessage" class="login-message"></div>
                 </div>
             </section>
+
+            <!-- Advertisement -->
+            <div class="ad-container" style="margin: 30px auto; text-align: center; max-width: 1200px;">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-6176180565195499"
+                     data-ad-slot="YOUR_AD_SLOT_ID_4"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
 
             <!-- Admin Dashboard (Hidden until logged in) -->
             <section id="adminDashboard" class="admin-dashboard hidden">
@@ -170,6 +181,12 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label for="adminFeatured">
+                                    <input type="checkbox" id="adminFeatured" style="margin-right:8px;"> Mark as Featured
+                                </label>
+                            </div>
+
                             <div class="form-group full-width">
                                 <label for="adminDescription">Description *</label>
                                 <textarea 
@@ -239,13 +256,99 @@
                 </div>
             </section>
         </div>
+
+        <!-- Edit Article Modal -->
+        <div id="editModal" class="modal hidden">
+            <div class="modal-overlay" onclick="closeEditModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>✏️ Edit Article</h2>
+                    <button class="modal-close" onclick="closeEditModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="editArticleForm" class="edit-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTitle">Title *</label>
+                                <input 
+                                    type="text" 
+                                    id="editTitle" 
+                                    required 
+                                    placeholder="Article title"
+                                    maxlength="200"
+                                >
+                                <small><span id="editTitleCount">0</span>/200</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editAuthor">Author *</label>
+                                <input 
+                                    type="text" 
+                                    id="editAuthor" 
+                                    required 
+                                    placeholder="Author name"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="editCategory">Category *</label>
+                                <select id="editCategory" required>
+                                    <option value="">Select category</option>
+                                    <option value="tech">🔬 Technology</option>
+                                    <option value="business">💼 Business</option>
+                                    <option value="sports">⚽ Sports</option>
+                                    <option value="health">🏥 Health</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="editDescription">Description *</label>
+                                <textarea 
+                                    id="editDescription" 
+                                    required 
+                                    placeholder="Article description"
+                                    rows="6"
+                                    maxlength="2000"
+                                ></textarea>
+                                <small><span id="editDescCount">0</span>/2000</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="editImage">Image URL</label>
+                                <input 
+                                    type="url" 
+                                    id="editImage" 
+                                    placeholder="https://example.com/image.jpg"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                                <label for="editFeatured">
+                                    <input type="checkbox" id="editFeatured" style="margin-right:8px;"> Mark as Featured
+                                </label>
+                            </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">💾 Save Changes</button>
+                            <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                        </div>
+                    </form>
+                    <div id="editMessage" class="form-message"></div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 NewsHub Admin. All rights reserved. | Secure Admin Panel</p>
-            <marque >Admin Newa News</marque>
         </div>
     </footer>
 
@@ -253,4 +356,3 @@
     <script src="admin.js"></script>
 </body>
 </html>
-

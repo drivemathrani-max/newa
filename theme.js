@@ -3,7 +3,6 @@
 // Initialize theme on page load
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
-    setupThemeToggle();
 });
 
 // Initialize theme from localStorage or system preference
@@ -25,7 +24,6 @@ function initializeTheme() {
 // Apply theme to the page
 function applyTheme(theme) {
     const body = document.body;
-    const themeBtn = document.getElementById('themeToggle');
     const themeIcon = document.querySelector('.theme-icon');
 
     // Remove existing theme class
@@ -44,23 +42,6 @@ function applyTheme(theme) {
 
     // Dispatch custom event for other scripts
     window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme } }));
-}
-
-// Setup theme toggle button
-function setupThemeToggle() {
-    const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', toggleTheme);
-    }
-}
-
-// Toggle between light and dark theme
-function toggleTheme() {
-    const body = document.body;
-    const currentTheme = body.classList.contains('theme-light') ? 'light' : 'dark';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-    applyTheme(newTheme);
 }
 
 // Listen for system theme changes

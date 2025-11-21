@@ -1,30 +1,36 @@
 // User Article Submission System
 
-const API_URL = 'http://localhost:3000/api/articles';
+const API_URL = 'http://localhost:3000/api/news';
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     checkUserSession();
     setupEventListeners();
-    setupThemeToggle();
 });
 
 // Check user session and populate form
 function checkUserSession() {
     const userSession = sessionStorage.getItem('userSession');
+    const adminSession = sessionStorage.getItem('adminSession');
     
-    if (!userSession) {
+    if (!userSession && !adminSession) {
         // Not logged in - show login prompt
         document.getElementById('notLoggedIn').classList.remove('hidden');
         document.getElementById('submitSection').classList.add('hidden');
-    } else {
-        // Logged in - show submit form
+        document.getElementById('userSection').classList.add('hidden');
+        document.getElementById('userMenuContainer').classList.add('hidden');
+    } else if (userSession) {
+        // Any logged-in user (admin or regular) can submit articles
         const user = JSON.parse(userSession);
         
         document.getElementById('notLoggedIn').classList.add('hidden');
         document.getElementById('submitSection').classList.remove('hidden');
-        document.getElementById('userDisplay').textContent = user.username;
-        document.getElementById('authorDisplay').value = user.username;
+        document.getElementById('userSection').classList.add('hidden');
+        document.getElementById('userMenuContainer').classList.remove('hidden');
+        document.getElementById('userDisplay').textContent = user.username || 'Admin';
+        
+        // Load and show articles badge
+        loadUserArticlesCount(user);
     }
 }
 
@@ -52,37 +58,6 @@ function setupEventListeners() {
         });
     }
 
-    // Image upload
-    const imageInput = document.getElementById('articleImage');
-    const uploadArea = document.querySelector('.upload-area');
-    
-    if (imageInput) {
-        imageInput.addEventListener('change', handleImageSelect);
-        
-        // Drag and drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = 'var(--accent-color)';
-            uploadArea.style.backgroundColor = 'rgba(233, 69, 96, 0.05)';
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = 'var(--border-color)';
-            uploadArea.style.backgroundColor = 'transparent';
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = 'var(--border-color)';
-            uploadArea.style.backgroundColor = 'transparent';
-            
-            if (e.dataTransfer.files.length > 0) {
-                imageInput.files = e.dataTransfer.files;
-                handleImageSelect();
-            }
-        });
-    }
-
     // Logout button
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -90,41 +65,33 @@ function setupEventListeners() {
     }
 }
 
-// Handle image selection
-function handleImageSelect() {
-    const imageInput = document.getElementById('articleImage');
-    const file = imageInput.files[0];
-
-    if (!file) return;
-
-    // Validate file
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-        showSubmitMessage('✗ Please upload JPEG, PNG, or WebP image', 'error');
-        imageInput.value = '';
-        return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-        showSubmitMessage('✗ Image must be less than 5MB', 'error');
-        imageInput.value = '';
-        return;
-    }
-
-    // Read and display preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const preview = document.getElementById('imagePreview');
-        const previewImage = document.getElementById('previewImage');
-        previewImage.src = e.target.result;
-        preview.classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
+// Load user articles count and show badge
+function loadUserArticlesCount(user) {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(articles => {
+            const userArticles = articles.filter(a => 
+                a.userId === user.userId || 
+                (a.author && a.author.toLowerCase() === user.username.toLowerCase())
+            );
+            updateArticlesBadge(userArticles.length);
+        })
+        .catch(error => console.error('Error loading articles count:', error));
 }
 
-// Remove image
-function removeImage() {
-    document.getElementById('articleImage').value = '';
-    document.getElementById('imagePreview').classList.add('hidden');
+// Update articles badge in navigation
+function updateArticlesBadge(count) {
+    const myArticlesLink = document.querySelector('nav a[href="user-articles.html"]');
+    if (myArticlesLink && count > 0) {
+        // Check if badge already exists
+        let badge = myArticlesLink.querySelector('.article-count-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'article-count-badge';
+            myArticlesLink.appendChild(badge);
+        }
+        badge.textContent = count;
+    }
 }
 
 // Handle article submission
@@ -141,6 +108,7 @@ function handleSubmitArticle(e) {
     const title = document.getElementById('articleTitle').value.trim();
     const description = document.getElementById('articleDescription').value.trim();
     const category = document.getElementById('articleCategory').value;
+    const imageUrl = document.getElementById('articleImage').value.trim();
     const author = user.username;
 
     // Validation
@@ -154,40 +122,21 @@ function handleSubmitArticle(e) {
         return;
     }
 
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('category', category);
-    formData.append('author', author);
-    formData.append('userId', user.userId);
+    // Prepare article data
+    const articleData = {
+        title,
+        description,
+        category,
+        author,
+        userId: user.userId,
+        image: imageUrl || undefined
+    };
 
-    // Add image if selected
-    const imageFile = document.getElementById('articleImage').files[0];
-    if (imageFile) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            formData.append('image', e.target.result);
-            submitArticleToServer(formData, user);
-        };
-        reader.readAsDataURL(imageFile);
-    } else {
-        submitArticleToServer(formData, user);
-    }
+    submitArticleToServer(articleData, user);
 }
 
 // Submit article to server
-function submitArticleToServer(formData, user) {
-    // Convert FormData to JSON
-    const articleData = {
-        title: formData.get('title'),
-        description: formData.get('description'),
-        category: formData.get('category'),
-        author: formData.get('author'),
-        userId: formData.get('userId'),
-        image: formData.get('image') || undefined
-    };
-
+function submitArticleToServer(articleData, user) {
     fetch(API_URL, {
         method: 'POST',
         headers: { 
@@ -198,19 +147,20 @@ function submitArticleToServer(formData, user) {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success || data.id) {
+        if (data.article || data.message) {
             showSubmitMessage('✓ Article published successfully!', 'success');
             
             // Clear form
             document.getElementById('submitArticleForm').reset();
             document.getElementById('titleCount').textContent = '0';
             document.getElementById('descCount').textContent = '0';
-            document.getElementById('imagePreview').classList.add('hidden');
             
             // Redirect to homepage after 2 seconds
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 2000);
+        } else if (data.error) {
+            showSubmitMessage(`✗ ${data.error}`, 'error');
         } else {
             showSubmitMessage(`✗ ${data.message || 'Failed to publish article'}`, 'error');
         }
@@ -233,13 +183,5 @@ function handleLogout() {
     if (confirm('Are you sure you want to logout?')) {
         sessionStorage.removeItem('userSession');
         window.location.href = 'index.html';
-    }
-}
-
-// Setup theme toggle
-function setupThemeToggle() {
-    const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', toggleTheme);
     }
 }

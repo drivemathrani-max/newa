@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Articles - NewsHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="user-articles.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="theme-enhanced.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6176180565195499"
+     crossorigin="anonymous"></script>
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo">📰 NewsHub</a>
+            <nav>
+                <a href="index.html">News</a>
+                <a href="user-articles.html" class="active">My Articles</a>
+                <a href="add-news-user.html">Submit Article</a>
+                <a href="admin.html">Admin Panel</a>
+                <a href="user-login.html">Login</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-menu hidden" id="userMenuContainer">
+                <span class="user-display" id="userDisplay">User</span>
+                <button id="logoutBtn" class="btn-logout" title="Logout">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Not Logged In State -->
+        <section id="notLoggedIn" class="hidden">
+            <div>
+                <h2>📰 Please Login First</h2>
+                <p>You need to be logged in to view and manage your articles</p>
+                <div>
+                    <a href="user-login.html" class="btn-login-prompt">Login / Sign Up</a>
+                    <a href="index.html" class="btn-login-prompt">Back to News</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logged In State -->
+        <section id="articlesSection" class="hidden">
+            <div class="section-header responsive-container">
+                <h2>📝 My Articles</h2>
+                <a href="add-news-user.html" class="btn-new-article">✍️ Write New Article</a>
+            </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalArticles">0</span>
+                        <span class="stat-label">Total Articles</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="techCount">0</span>
+                        <span class="stat-label">Technology</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="businessCount">0</span>
+                        <span class="stat-label">Business</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="sportsCount">0</span>
+                        <span class="stat-label">Sports</span>
+                    </div>
+                </div>
+
+                <!-- Advertisement -->
+                <div class="ad-container" style="margin: 30px 0; text-align: center;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-6176180565195499"
+                         data-ad-slot="YOUR_AD_SLOT_ID_3"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>            <!-- Filter Section -->
+            <div class="search-filter-container">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        id="searchArticles"
+                        placeholder="Search your articles..."
+                    >
+                </div>
+                <select id="filterCategory">
+                    <option value="">All Categories</option>
+                    <option value="tech">Technology</option>
+                    <option value="business">Business</option>
+                    <option value="sports">Sports</option>
+                    <option value="health">Health</option>
+                </select>
+            </div>
+
+            <!-- Articles List -->
+            <div id="userArticlesList">
+                <p class="empty-message">Loading your articles...</p>
+            </div>
+
+            <!-- No Articles Message -->
+            <div id="noArticles" class="hidden">
+                <h3>📄 No Articles Yet</h3>
+                <p>You haven't published any articles yet.</p>
+                <a href="add-news-user.html" class="btn-new-article">Write Your First Article</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="user-articles.js"></script>
+</body>
+</html>

@@ -8,58 +8,59 @@
     <link rel="stylesheet" href="user-login.css">
     <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="theme-enhanced.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6176180565195499"
+     crossorigin="anonymous"></script>
     <!-- Google OAuth -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-light">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo"><a href="index.html">📰 NewsHub</a></div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="index.html">News</a></li>
-                    <li class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
-                            <span class="theme-icon">🌙</span>
-                        </button>
-                    </li>
-                </ul>
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo">📰 NewsHub</a>
+            <nav>
+                <a href="index.html">News</a>
+                <a href="user-login.html" class="active">Login</a>
             </nav>
+        </div>
+        <div class="header-right">
+            <button id="themeToggle" title="Toggle theme">🌙</button>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content login-page">
-        <div class="container">
+        <div class="container responsive-container">
             <div class="login-wrapper">
                 <!-- Login Form -->
-                <div class="auth-container" id="loginContainer">
-                    <h1>Welcome Back</h1>
-                    <p>Login to your NewsHub account</p>
+                <div class="auth-container" id="loginContainer" style="backdrop-filter: blur(16px); background: rgba(255,255,255,0.85); box-shadow: 0 8px 32px rgba(37,99,235,0.12); border-radius: 18px; border: 1.5px solid #e0e7ef;">
+                    <h1 style="font-size:2rem; font-weight:700; color:#2563eb; margin-bottom:8px;">Welcome Back</h1>
+                    <p style="color:#64748b; font-size:1rem; margin-bottom:24px;">Login to your NewsHub account</p>
                     
-                    <form id="userLoginForm" class="auth-form">
+                    <form id="userLoginForm" class="auth-form" style="gap:24px;">
                         <div class="form-group">
-                            <label for="loginUsername">Username or Email</label>
+                            <label for="loginUsername" style="font-weight:600; color:#2563eb;">Username or Email</label>
                             <input 
                                 type="text" 
                                 id="loginUsername" 
                                 required 
                                 placeholder="Enter username or email"
                                 autocomplete="off"
+                                style="padding:14px; border-radius:10px; border:2px solid #e0e7ef; font-size:1rem;"
                             >
                         </div>
                         <div class="form-group">
-                            <label for="loginPassword">Password</label>
+                            <label for="loginPassword" style="font-weight:600; color:#2563eb;">Password</label>
                             <input 
                                 type="password" 
                                 id="loginPassword" 
                                 required 
                                 placeholder="Enter your password"
                                 autocomplete="off"
+                                style="padding:14px; border-radius:10px; border:2px solid #e0e7ef; font-size:1rem;"
                             >
                         </div>
-                        <button type="submit" class="btn-auth">Login</button>
+                        <button type="submit" class="btn-auth" style="background:linear-gradient(90deg,#2563eb 0%,#f43f5e 100%); color:#fff; border-radius:10px; font-size:1.1rem; font-weight:600; padding:14px; box-shadow:0 2px 8px rgba(37,99,235,0.08);">Login</button>
                     </form>
                     <div id="loginMessage" class="auth-message"></div>
 

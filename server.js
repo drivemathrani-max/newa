@@ -35,8 +35,17 @@ const transporter = nodemailer.createTransport({
 //     }
 // });
 
+// Check if email credentials are configured
+const emailConfigured = process.env.GMAIL_USER || (transporter.options.auth.user !== 'your-email@gmail.com');
+
 // Send welcome email function
 function sendWelcomeEmail(userEmail, username) {
+    // Skip if email not configured
+    if (!emailConfigured) {
+        console.log('Email not configured - skipping welcome email for:', username);
+        return;
+    }
+
     const mailOptions = {
         from: 'noreply@newshub.com',
         to: userEmail,
@@ -80,15 +89,21 @@ function sendWelcomeEmail(userEmail, username) {
     // Send email (non-blocking)
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log('Email sending error:', error);
+            console.log('⚠️ Email sending warning for', userEmail + ':', error.message);
         } else {
-            console.log('Welcome email sent to:', userEmail);
+            console.log('✓ Welcome email sent to:', userEmail);
         }
     });
 }
 
 // Send login notification email
 function sendLoginNotificationEmail(userEmail, username) {
+    // Skip if email not configured
+    if (!emailConfigured) {
+        console.log('Email not configured - skipping login notification for:', username);
+        return;
+    }
+
     const mailOptions = {
         from: 'noreply@newshub.com',
         to: userEmail,
@@ -131,9 +146,9 @@ function sendLoginNotificationEmail(userEmail, username) {
     // Send email (non-blocking)
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log('Email sending error:', error);
+            console.log('⚠️ Email sending warning for', userEmail + ':', error.message);
         } else {
-            console.log('Login notification email sent to:', userEmail);
+            console.log('✓ Login notification email sent to:', userEmail);
         }
     });
 }
@@ -229,12 +244,14 @@ app.get('/api/news/category/:category', (req, res) => {
 
 // Add new news article
 app.post('/api/news', (req, res) => {
-    const { title, description, category, author, image } = req.body;
+    const { title, description, category, author, image, userId, isAdmin, featured } = req.body;
 
     // Validation
     if (!title || !description || !category || !author) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    // Allow both admins and regular users to add articles
 
     const newArticle = {
         id: uuidv4(),
@@ -242,12 +259,14 @@ app.post('/api/news', (req, res) => {
         description,
         category,
         author,
+        userId: userId || null,
         image: image || `https://via.placeholder.com/400x300?text=${encodeURIComponent(title)}`,
         date: new Date().toLocaleDateString('en-US', { 
             year: 'numeric', 
             month: 'short', 
             day: 'numeric' 
-        })
+        }),
+        featured: !!featured // Only admin can set featured
     };
 
     newsData.unshift(newArticle);
@@ -262,10 +281,17 @@ app.post('/api/news', (req, res) => {
 // Delete news article
 app.delete('/api/news/:id', (req, res) => {
     const { id } = req.params;
+    const isAdmin = req.query.isAdmin === 'true' || req.body?.isAdmin;
+    const userId = req.body?.userId;
     const index = newsData.findIndex(article => article.id === id);
 
     if (index === -1) {
         return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Only allow delete if admin or owner
+    if (!isAdmin && newsData[index].userId !== userId) {
+        return res.status(403).json({ error: 'You do not have permission to delete this article' });
     }
 
     const deletedArticle = newsData.splice(index, 1);
@@ -280,7 +306,12 @@ app.delete('/api/news/:id', (req, res) => {
 // Update news article
 app.put('/api/news/:id', (req, res) => {
     const { id } = req.params;
-    const { title, description, category, author, image } = req.body;
+    const { title, description, category, author, image, isAdmin, featured } = req.body;
+    
+    // Check if user is admin
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Only administrators can edit articles' });
+    }
     
     const article = newsData.find(a => a.id === id);
 
@@ -354,30 +385,31 @@ app.post('/api/users/register', (req, res) => {
         });
     }
 
-    // Check if user exists
-    if (usersData.find(u => u.username === username || u.email === email)) {
-        return res.status(409).json({ 
-            success: false, 
-            message: 'Username or email already exists' 
-        });
+    // Check if user is admin
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Only administrators can edit articles' });
     }
 
-    // Create new user
-    const newUser = {
-        id: uuidv4(),
-        username,
-        email,
-        password: password, // In production, use bcrypt to hash password
-        createdAt: new Date().toISOString()
-    };
+    const article = newsData.find(a => a.id === id);
 
-    usersData.push(newUser);
-    saveUsersData();
+    if (!article) {
+        return res.status(404).json({ error: 'Article not found' });
+    }
 
-    // Send welcome email
-    sendWelcomeEmail(email, username);
+    // Update fields
+    if (title) article.title = title;
+    if (description) article.description = description;
+    if (category) article.category = category;
+    if (author) article.author = author;
+    if (image) article.image = image;
+    if (typeof featured !== 'undefined') article.featured = !!featured;
 
-    // Generate token (simple JWT-like token)
+    saveNewsData();
+
+    res.json({ 
+        message: 'Article updated successfully', 
+        article 
+    });
     const token = Buffer.from(`${newUser.id}:${newUser.username}`).toString('base64');
 
     res.status(201).json({

@@ -7,47 +7,61 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="theme-enhanced.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6176180565195499"
+     crossorigin="anonymous"></script>
 </head>
 <body class="theme-light">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">📰 NewsHub</div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="#" onclick="filterNews('all')">All</a></li>
-                    <li><a href="#" onclick="filterNews('tech')">Technology</a></li>
-                    <li><a href="#" onclick="filterNews('business')">Business</a></li>
-                    <li><a href="#" onclick="filterNews('sports')">Sports</a></li>
-                    <li><a href="#" onclick="filterNews('health')">Health</a></li>
-                    <li><a href="add-news-user.html" class="nav-submit">✍️ Submit Article</a></li>
-                    <li><a href="admin.html" class="nav-admin">👤 Admin</a></li>
-                    <li class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
-                            <span class="theme-icon">🌙</span>
-                        </button>
-                    </li>
-                </ul>
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo">📰 NewsHub</a>
+            <nav id="mainNav">
+                <a href="index.html" class="active">News</a>
+                <a href="user-articles.html">My Articles</a>
+                <a href="add-news-user.html">Submit Article</a>
+                <a href="admin.html">Admin Panel</a>
+                <a href="user-login.html">Login</a>
             </nav>
+        </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Open menu" style="display:none;">
+            <span class="hamburger"></span>
+        </button>
+        <div class="header-right">
+            <div class="user-menu hidden" id="userMenuContainer">
+                <span class="user-display" id="userDisplay">User</span>
+                <button id="logoutBtn" class="btn-logout" title="Logout">Logout</button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="container">
-            <!-- Featured News -->
+        <div class="container responsive-container">
+            <!-- Featured News Carousel -->
             <section class="featured">
-                <h2>Featured Story</h2>
-                <article class="featured-article" id="featuredArticle">
-                    <img src="https://via.placeholder.com/1200x400?text=Featured+News" alt="Featured news">
-                    <div class="featured-content">
-                        <span class="category">Technology</span>
-                        <h3>Breaking: New AI Technology Transforms Industry</h3>
-                        <p>Revolutionary advancements in artificial intelligence are changing the landscape of modern technology and business operations worldwide.</p>
-                        <a href="#" class="read-more">Read Full Story →</a>
+                <h2>Featured Stories</h2>
+                <div class="featured-carousel">
+                    <button class="carousel-btn carousel-prev" id="prevBtn" aria-label="Previous">‹</button>
+                    <div class="featured-carousel-container" id="featuredCarouselContainer">
+                        <!-- Featured articles will be loaded here by JavaScript -->
                     </div>
-                </article>
+                    <button class="carousel-btn carousel-next" id="nextBtn" aria-label="Next">›</button>
+                </div>
+                <div class="carousel-indicators" id="carouselIndicators"></div>
             </section>
+
+            <!-- Advertisement -->
+            <div class="ad-container" style="margin: 30px 0; text-align: center;">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-6176180565195499"
+                     data-ad-slot="YOUR_AD_SLOT_ID_1"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
 
             <!-- News Grid -->
             <section class="news-section">
@@ -55,18 +69,54 @@
                 <div class="news-grid" id="newsGrid">
                     <!-- News articles will be loaded here by JavaScript -->
                 </div>
+
+                <!-- Advertisement -->
+                <div class="ad-container" style="margin: 30px 0; text-align: center;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-6176180565195499"
+                         data-ad-slot="YOUR_AD_SLOT_ID_2"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
             </section>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
+        <div class="container responsive-container">
             <p>&copy; 2025 NewsHub. All rights reserved. | Stay informed, stay updated.</p>
         </div>
     </footer>
 
     <script src="script.js"></script>
     <script src="theme.js"></script>
+    <script>
+    // Responsive nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const mainNav = document.getElementById('mainNav');
+    function checkNavDisplay() {
+        if (window.innerWidth <= 700) {
+            navToggle.style.display = 'inline-flex';
+            mainNav.style.display = 'none';
+        } else {
+            navToggle.style.display = 'none';
+            mainNav.style.display = 'flex';
+        }
+    }
+    navToggle.addEventListener('click', function() {
+        if (mainNav.style.display === 'none') {
+            mainNav.style.display = 'flex';
+        } else {
+            mainNav.style.display = 'none';
+        }
+    });
+    window.addEventListener('resize', checkNavDisplay);
+    document.addEventListener('DOMContentLoaded', checkNavDisplay);
+    </script>
 </body>
 </html>

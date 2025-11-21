@@ -6,7 +6,6 @@ const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // Replace with your Google Cl
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
-    setupThemeToggle();
     checkUserSession();
     initializeGoogleAuth();
 });
@@ -103,7 +102,7 @@ function handleUserLogin(e) {
             showMessage(message, '✓ Login successful! Redirecting...', 'success');
             
             setTimeout(() => {
-                window.location.href = 'add-news.html';
+                window.location.href = 'user-articles.html';
             }, 1500);
         } else {
             showMessage(message, `✗ ${data.message || 'Login failed'}`, 'error');
@@ -170,7 +169,7 @@ function handleUserSignup(e) {
                     userId: data.user.id,
                     token: data.token
                 }));
-                window.location.href = 'add-news.html';
+                window.location.href = 'user-articles.html';
             }, 1500);
         } else {
             showMessage(message, `✗ ${data.message || 'Signup failed'}`, 'error');
@@ -256,7 +255,7 @@ function handleGoogleAuth(response) {
                 showMessage(message, '✓ Google login successful! Redirecting...', 'success');
                 
                 setTimeout(() => {
-                    window.location.href = 'add-news.html';
+                    window.location.href = 'user-articles.html';
                 }, 1500);
             } else {
                 const message = document.getElementById('loginMessage');
@@ -275,15 +274,7 @@ function handleGoogleAuth(response) {
 function checkUserSession() {
     const userSession = sessionStorage.getItem('userSession');
     if (userSession) {
-        // User already logged in, redirect to add-news
-        window.location.href = 'add-news.html';
-    }
-}
-
-// Setup theme toggle
-function setupThemeToggle() {
-    const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', toggleTheme);
+        // User already logged in, redirect to user articles dashboard
+        window.location.href = 'user-articles.html';
     }
 }

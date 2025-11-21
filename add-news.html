@@ -8,30 +8,32 @@
     <link rel="stylesheet" href="add-news.css">
     <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="theme-enhanced.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6176180565195499"
+     crossorigin="anonymous"></script>
 </head>
 <body class="theme-light">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">📰 NewsHub</div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="add-news.html" class="active">Add News</a></li>
-                    <li><a href="#" onclick="filterNews('all')">All News</a></li>
-                    <li class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
-                            <span class="theme-icon">🌙</span>
-                        </button>
-                    </li>
-                </ul>
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo">📰 NewsHub</a>
+            <nav>
+                <a href="index.html">News</a>
+                <a href="user-articles.html">My Articles</a>
+                <a href="add-news.html" class="active">Add News</a>
             </nav>
+        </div>
+        <div class="header-right">
+            <button id="themeToggle" title="Toggle theme">🌙</button>
+            <div class="user-menu hidden" id="userMenuContainer">
+                <span class="user-display" id="userDisplay">User</span>
+                <button id="logoutBtn" class="btn-logout" title="Logout">Logout</button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content add-news-page">
-        <div class="container">
+        <div class="container responsive-container">
             <section class="add-news-container">
                 <div class="add-news-header">
                     <h1>Share Your News Story</h1>

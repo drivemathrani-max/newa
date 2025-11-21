@@ -8,152 +8,141 @@
     <link rel="stylesheet" href="add-news.css">
     <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="theme-enhanced.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6176180565195499"
+     crossorigin="anonymous"></script>
 </head>
 <body class="theme-light">
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo"><a href="index.html">📰 NewsHub</a></div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="index.html">News</a></li>
-                    <li><a href="add-news.html" class="nav-active">Submit Article</a></li>
-                    <li class="theme-toggle">
-                        <button id="themeToggle" class="theme-btn" title="Toggle theme">
-                            <span class="theme-icon">🌙</span>
-                        </button>
-                    </li>
-                    <li>
-                        <div class="user-menu">
-                            <span id="userDisplay">User</span>
-                            <button id="logoutBtn" class="btn-logout" title="Logout">🚪 Logout</button>
-                        </div>
-                    </li>
-                </ul>
+    <header>
+        <div class="header-left">
+            <a href="index.html" class="logo">📰 NewsHub</a>
+            <nav>
+                <a href="index.html">News</a>
+                <a href="user-articles.html">My Articles</a>
+                <a href="add-news-user.html" class="active">Submit Article</a>
+                <a href="admin.html">Admin Panel</a>
+                <a href="user-login.html">Login</a>
             </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-menu hidden" id="userMenuContainer">
+                <span class="user-display" id="userDisplay">User</span>
+                <button id="logoutBtn" class="btn-logout" title="Logout">Logout</button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="main-content submit-page">
-        <div class="container">
-            <!-- Not Logged In State -->
-            <section id="notLoggedIn" class="login-prompt">
-                <div class="prompt-box">
-                    <h2>📝 Please Login First</h2>
-                    <p>You need to be logged in to submit articles to NewsHub</p>
-                    <div class="prompt-buttons">
-                        <a href="user-login.html" class="btn-primary">Login / Sign Up</a>
-                        <a href="index.html" class="btn-secondary">Back to News</a>
+    <main>
+        <!-- Not Logged In State -->
+        <section id="notLoggedIn" class="hidden">
+            <div>
+                <h2>📝 Please Login First</h2>
+                <p>You need to be logged in. Admins can submit articles via the Admin Panel.</p>
+                <div>
+                    <a href="user-login.html" class="btn-login-prompt">Login / Sign Up</a>
+                    <a href="index.html" class="btn-login-prompt">Back to News</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Logged In But Not Admin -->
+        <section id="userSection" class="hidden">
+            <div style="max-width: 700px; margin: 2rem auto; text-align: center; padding: 2rem;">
+                <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 2rem; border-radius: 12px; border: 2px solid #fcd34d;">
+                    <h2 style="color: #78350f; margin-bottom: 1rem;">⚙️ Admin Feature</h2>
+                    <p style="color: #92400e; margin-bottom: 1.5rem; line-height: 1.6;">
+                        Article submission is restricted to administrators only. 
+                        This ensures consistent quality and editorial standards for NewsHub.
+                    </p>
+                    <div>
+                        <a href="user-articles.html" class="btn-login-prompt" style="background: #3b82f6; margin-right: 1rem;">📰 My Articles</a>
+                        <a href="index.html" class="btn-login-prompt" style="background: #6366f1;">← Back to News</a>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Logged In State -->
-            <section id="submitSection" class="submit-section hidden">
-                <div class="submit-header">
-                    <h1>📤 Submit Your Article</h1>
-                    <p>Share your story with NewsHub readers</p>
-                </div>
+        <!-- Admin Logged In State -->
+        <section id="submitSection" class="hidden">
+            <div class="section-header responsive-container">
+                <h2>📤 Submit Article</h2>
+                <a href="user-articles.html" class="btn-new-article">📰 My Articles</a>
+            </div>
 
-                <div class="submit-container">
-                    <form id="submitArticleForm" class="submit-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="articleTitle">Article Title *</label>
-                                <input 
-                                    type="text" 
-                                    id="articleTitle" 
-                                    required 
-                                    placeholder="Enter article title"
-                                    maxlength="200"
-                                >
-                                <small><span id="titleCount">0</span>/200</small>
-                            </div>
-                        </div>
+            <div style="max-width: 700px; margin: 2rem auto;">
+                <form id="submitArticleForm">
+                    <div class="form-group">
+                        <label for="articleTitle">Article Title *</label>
+                        <input 
+                            type="text" 
+                            id="articleTitle" 
+                            required 
+                            placeholder="Enter article title"
+                            maxlength="200"
+                        >
+                        <div class="char-count"><span id="titleCount">0</span>/200</div>
+                    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="articleAuthor">Author Name (Your Name) *</label>
-                                <input 
-                                    type="text" 
-                                    id="articleAuthor" 
-                                    required 
-                                    placeholder="Your name"
-                                    readonly
-                                    id="authorDisplay"
-                                >
-                            </div>
-                            <div class="form-group">
-                                <label for="articleCategory">Category *</label>
-                                <select id="articleCategory" required>
-                                    <option value="">Select a category</option>
-                                    <option value="tech">🔬 Technology</option>
-                                    <option value="business">💼 Business</option>
-                                    <option value="sports">⚽ Sports</option>
-                                    <option value="health">🏥 Health</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="articleCategory">Category *</label>
+                        <select id="articleCategory" required>
+                            <option value="">Select a category</option>
+                            <option value="tech">Technology</option>
+                            <option value="business">Business</option>
+                            <option value="sports">Sports</option>
+                            <option value="health">Health</option>
+                        </select>
+                    </div>
 
-                        <div class="form-row">
-                            <div class="form-group full-width">
-                                <label for="articleDescription">Article Description *</label>
-                                <textarea 
-                                    id="articleDescription" 
-                                    required 
-                                    placeholder="Write your article description (minimum 50 characters)"
-                                    rows="8"
-                                    maxlength="3000"
-                                ></textarea>
-                                <small><span id="descCount">0</span>/3000</small>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="articleDescription">Article Description *</label>
+                        <textarea 
+                            id="articleDescription" 
+                            required 
+                            placeholder="Write your article description (minimum 50 characters)"
+                            rows="8"
+                            maxlength="2000"
+                        ></textarea>
+                        <div class="char-count"><span id="descCount">0</span>/2000</div>
+                    </div>
 
-                        <div class="form-row">
-                            <div class="form-group full-width">
-                                <label for="articleImage">Article Image</label>
-                                <div class="image-upload">
-                                    <input 
-                                        type="file" 
-                                        id="articleImage" 
-                                        accept="image/*"
-                                        class="image-input"
-                                    >
-                                    <div class="upload-area">
-                                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="17 8 12 3 7 8"></polyline>
-                                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                                        </svg>
-                                        <p>Drag and drop your image here or click to browse</p>
-                                        <small>Max 5MB - JPEG, PNG, WebP</small>
-                                    </div>
-                                    <div id="imagePreview" class="image-preview hidden">
-                                        <img id="previewImage" src="" alt="Preview">
-                                        <button type="button" class="btn-remove-image" onclick="removeImage()">✕ Remove</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="articleImage">Featured Image URL</label>
+                        <input 
+                            type="url" 
+                            id="articleImage" 
+                            placeholder="https://example.com/image.jpg"
+                        >
+                    </div>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn-submit">✨ Publish Article</button>
-                            <a href="index.html" class="btn-cancel">Cancel</a>
-                        </div>
-                    </form>
+                    <div id="submitMessage" class="form-message"></div>
 
-                    <div id="submitMessage" class="submit-message"></div>
-                </div>
-            </section>
-        </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn-save" style="flex: 1;">✍️ Submit Article</button>
+                        <a href="user-articles.html" class="btn-cancel" style="flex: 1; text-align: center; line-height: 2.5;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Advertisement -->
+            <div class="ad-container" style="margin: 30px auto; text-align: center; max-width: 700px;">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-6176180565195499"
+                     data-ad-slot="YOUR_AD_SLOT_ID_5"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 NewsHub. All rights reserved. | User Article Submission</p>
-        </div>
+    <footer>
+        <p>&copy; 2025 NewsHub. All rights reserved.</p>
     </footer>
 
     <script src="theme.js"></script>

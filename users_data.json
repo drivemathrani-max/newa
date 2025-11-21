@@ -12,5 +12,19 @@
     "email": "sateejmathrani@outlook.com",
     "password": "kalpna",
     "createdAt": "2025-11-19T10:49:19.719Z"
+  },
+  {
+    "id": "3a0d0a56-2c38-43a9-b848-61ae9f8c7538",
+    "username": "sateejk",
+    "email": "digitalnetix25@gmail.com",
+    "password": "dkskdksdk",
+    "createdAt": "2025-11-19T14:17:39.757Z"
+  },
+  {
+    "id": "7c38dae3-6b02-495d-b969-030eb2c12c8d",
+    "username": "sateejm",
+    "email": "oxaamgbpn12219@oxaam.com",
+    "password": "sateej",
+    "createdAt": "2025-11-19T14:20:12.651Z"
   }
 ]

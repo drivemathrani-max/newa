@@ -6,12 +6,79 @@ let uploadedImageData = null;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    checkUserSession();
     setupFormHandler();
     setupCharacterCounters();
     setupImagePreview();
     setupFileUpload();
     setupTabNavigation();
 });
+
+// Check user session and manage navbar
+function checkUserSession() {
+    const userSession = sessionStorage.getItem('userSession');
+    const userMenuContainer = document.getElementById('userMenuContainer');
+    
+    if (userMenuContainer) {
+        if (userSession) {
+            // User is logged in - show menu
+            const user = JSON.parse(userSession);
+            const userDisplay = userMenuContainer.querySelector('#userDisplay');
+            if (userDisplay) {
+                userDisplay.textContent = user.username;
+            }
+            userMenuContainer.classList.remove('hidden');
+            
+            // Setup logout button
+            const logoutBtn = userMenuContainer.querySelector('#logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Load and show articles badge
+            loadUserArticlesCount(user);
+        } else {
+            // User is not logged in - hide menu
+            userMenuContainer.classList.add('hidden');
+        }
+    }
+}
+
+// Load user articles count for badge
+function loadUserArticlesCount(user) {
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(articles => {
+            const userArticles = articles.filter(a => 
+                a.userId === user.userId || 
+                (a.author && a.author.toLowerCase() === user.username.toLowerCase())
+            );
+            updateArticlesBadge(userArticles.length);
+        })
+        .catch(error => console.error('Error loading articles count:', error));
+}
+
+// Update articles badge in navigation
+function updateArticlesBadge(count) {
+    const myArticlesLink = document.querySelector('nav a[href="user-articles.html"]');
+    if (myArticlesLink && count > 0) {
+        let badge = myArticlesLink.querySelector('.article-count-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'article-count-badge';
+            myArticlesLink.appendChild(badge);
+        }
+        badge.textContent = count;
+    }
+}
+
+// Handle logout
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.removeItem('userSession');
+        window.location.href = 'index.html';
+    }
+}
 
 // Setup form submission
 function setupFormHandler() {

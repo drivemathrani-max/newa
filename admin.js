@@ -9,7 +9,6 @@ let adminPassword = localStorage.getItem('adminPassword') || DEFAULT_PASSWORD;
 document.addEventListener('DOMContentLoaded', () => {
     checkLoginStatus();
     setupEventListeners();
-    setupThemeToggle();
 });
 
 // Check if admin is already logged in
@@ -19,6 +18,30 @@ function checkLoginStatus() {
         isLoggedIn = true;
         showDashboard();
         loadArticles();
+    }
+    
+    // Handle user menu for logout functionality
+    const userMenuContainer = document.getElementById('userMenuContainer');
+    if (userMenuContainer && isLoggedIn) {
+        const userDisplay = userMenuContainer.querySelector('#userDisplay');
+        if (userDisplay) {
+            userDisplay.textContent = 'Admin';
+        }
+        userMenuContainer.classList.remove('hidden');
+        
+        const logoutBtn = userMenuContainer.querySelector('#logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+        }
+    }
+}
+
+// Handle admin logout
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        sessionStorage.removeItem('adminSession');
+        isLoggedIn = false;
+        location.reload();
     }
 }
 
@@ -70,6 +93,9 @@ function setupEventListeners() {
     if (passwordForm) {
         passwordForm.addEventListener('submit', handlePasswordChange);
     }
+
+    // Edit form listeners
+    setupEditFormListeners();
 }
 
 // Handle login
@@ -221,6 +247,7 @@ function handleAddArticle(e) {
     const category = document.getElementById('adminCategory').value;
     const author = document.getElementById('adminAuthor').value.trim();
     const image = document.getElementById('adminImage').value.trim();
+    const featured = document.getElementById('adminFeatured').checked;
 
     const message = document.getElementById('adminFormMessage');
 
@@ -242,7 +269,9 @@ function handleAddArticle(e) {
         description,
         category,
         author,
-        image: image || undefined
+        image: image || undefined,
+        isAdmin: true, // Mark as admin-created article
+        featured // Only admin can set featured
     };
 
     fetch(API_URL, {
@@ -279,7 +308,7 @@ function adminDeleteArticle(articleId, buttonElement) {
     buttonElement.disabled = true;
     buttonElement.textContent = '⏳ Deleting...';
 
-    fetch(`${API_URL}/${articleId}`, {
+    fetch(`${API_URL}/${articleId}?isAdmin=true`, {
         method: 'DELETE'
     })
     .then(response => response.json())
@@ -294,9 +323,133 @@ function adminDeleteArticle(articleId, buttonElement) {
     });
 }
 
-// Edit article (placeholder)
+// Edit article
 function editArticle(articleId) {
-    alert('Edit functionality coming soon!');
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(articles => {
+            const article = articles.find(a => a.id === articleId);
+            if (article) {
+                showEditForm(article);
+            } else {
+                alert('Article not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading article');
+        });
+}
+
+// Show edit form with article data
+function showEditForm(article) {
+    // Store article ID for later submission
+    document.getElementById('editArticleForm').dataset.articleId = article.id;
+    
+    // Populate form fields
+    document.getElementById('editTitle').value = article.title;
+    document.getElementById('editAuthor').value = article.author;
+    document.getElementById('editCategory').value = article.category;
+    document.getElementById('editDescription').value = article.description;
+    document.getElementById('editImage').value = article.image || '';
+    document.getElementById('editFeatured').checked = article.featured || false;
+    
+    // Update character counters
+    document.getElementById('editTitleCount').textContent = article.title.length;
+    document.getElementById('editDescCount').textContent = article.description.length;
+    
+    // Show modal
+    document.getElementById('editModal').classList.remove('hidden');
+}
+
+// Close edit modal
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+    document.getElementById('editArticleForm').reset();
+    document.getElementById('editMessage').textContent = '';
+    document.getElementById('editMessage').className = 'form-message';
+}
+
+// Setup edit form listeners
+function setupEditFormListeners() {
+    const editForm = document.getElementById('editArticleForm');
+    if (editForm) {
+        editForm.addEventListener('submit', submitEditArticle);
+    }
+
+    // Character counters
+    const titleInput = document.getElementById('editTitle');
+    const descInput = document.getElementById('editDescription');
+    
+    if (titleInput) {
+        titleInput.addEventListener('input', (e) => {
+            document.getElementById('editTitleCount').textContent = e.target.value.length;
+        });
+    }
+
+    if (descInput) {
+        descInput.addEventListener('input', (e) => {
+            document.getElementById('editDescCount').textContent = e.target.value.length;
+        });
+    }
+}
+
+// Submit edited article
+function submitEditArticle(e) {
+    e.preventDefault();
+
+    const articleId = document.getElementById('editArticleForm').dataset.articleId;
+    const title = document.getElementById('editTitle').value.trim();
+    const description = document.getElementById('editDescription').value.trim();
+    const category = document.getElementById('editCategory').value;
+    const author = document.getElementById('editAuthor').value.trim();
+    const image = document.getElementById('editImage').value.trim();
+    const featured = document.getElementById('editFeatured') ? document.getElementById('editFeatured').checked : false;
+    const message = document.getElementById('editMessage');
+
+    // Validation
+    if (!title || !description || !category || !author) {
+        message.textContent = '✗ Please fill all required fields.';
+        message.className = 'form-message error';
+        return;
+    }
+
+    if (description.length < 50) {
+        message.textContent = '✗ Description must be at least 50 characters.';
+        message.className = 'form-message error';
+        return;
+    }
+
+    const updatedArticle = {
+        title,
+        description,
+        category,
+        author,
+        image: image || undefined,
+        isAdmin: true, // Mark as admin-edited article
+        featured // Only admin can set featured
+    };
+
+    fetch(`${API_URL}/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedArticle)
+    })
+    .then(response => response.json())
+    .then(data => {
+        message.textContent = '✓ Article updated successfully!';
+        message.className = 'form-message success';
+        
+        setTimeout(() => {
+            closeEditModal();
+            loadArticles();
+        }, 1500);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        message.textContent = '✗ Error updating article.';
+        message.className = 'form-message error';
+    });
 }
 
 // Handle password change
@@ -337,14 +490,6 @@ function handlePasswordChange(e) {
     setTimeout(() => {
         message.className = 'form-message';
     }, 5000);
-}
-
-// Setup theme toggle
-function setupThemeToggle() {
-    const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', toggleTheme);
-    }
 }
 
 // Capitalize function
